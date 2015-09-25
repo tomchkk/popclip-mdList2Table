@@ -1,0 +1,12 @@
+{
+	"folders":
+	[
+		{
+			"file_exclude_patterns":
+			[
+				"*.sublime-project"
+			],
+			"path": "/Users/tomtom/Developer/php/PopClip Extensions/MdList2Table"
+		}
+	]
+}

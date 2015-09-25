@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Extension Identifier</key>
+	<string>com.lickyourlips.popclip.extension.definechords</string>
+	<key>Extension Name</key>
+	<string>Define ChordPro</string>
+	<key>Extension Description</key>
+	<string>Copy selected ChordPro text, strip it of lyrics and chord duplications; put chord definition templates in the clipboard</string>
+	<key>Required Apps</key>
+	<array>
+		<string>com.sublimetext.2</string>
+		<string>com.apple.TextEdit</string>
+		<string>com.gfApps.ChordPro-Buddy</string>
+	</array>
+	<key>Actions</key>
+	<array>
+		<dict>
+			<key>After</key>
+			<string>copy-result</string>
+			<key>Title</key>
+			<string>Define ChordPro Chords</string>
+			<key>Shell Script File</key>
+			<string>PopClip.php</string>
+			<key>Script Interpreter</key>
+			<string>/usr/bin/php</string>
+			<key>Requirements</key>
+			<array>
+				<string>copy</string>
+				<string>paste</string>
+			</array>
+			<key>Restore Pasteboard</key>
+			<true/>
+			<key>Image File</key>
+			<string>note-lines.png</string>
+		</dict>
+	</array>
+	<key>Version</key>
+	<integer>1</integer>
+</dict>
+</plist>
