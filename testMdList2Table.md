@@ -1,12 +1,12 @@
 Input:
 
-- Heading 1
-	  - Item 1
-	  - Item 2
-	- Heading 2
-	  - Item 1
-	  - Item 2
-	- Heading 3
+ - Heading 1
+ - Item 1
+ - Item 2
+- Heading 2
+ - Item 1
+ - Item 2
+- Heading 3
 
 Result pasted in place:
 
