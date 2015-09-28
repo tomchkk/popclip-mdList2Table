@@ -4,51 +4,121 @@ namespace lickyourlips\MdList2Table;
 
 class MdList2Table
 {
-	private $mdList;
-	// private $chordPro;
+	private $mdTableArray = [];
 
-	// private $chordsRegX = '/\[[^\]]+\]/';
+	private $columnWidth;
 
-	// private $bracketsRegX = '/\[|\]/';
+	private $paddingValue = 1;
+	private $paddingChar = ' ';
 
-	private $mdTableString = "";
+	private $colDelim = '|';
+	private $rowDelim = '-';
+
+	private $mdTableString;
 
 	public function __construct($mdList)
 	{
-		$this->setMdList($mdList);
-		$this->setMdTableString($this->parseMdList());
+		$this->setMdTableArray($this->parseMdList($mdList));
+		$this->setMdTableString($this->buildMdTableString());
 	}
 
-	private function setMdList($mdList)
+	private function setMdTableArray($mdTableArray)
 	{
-		$this->mdList = $mdList;
+		$this->mdTableArray = $mdTableArray;
 	}
 
-	private function setMdTableString($mdTableItems)
+	/**
+	 * match each line, then detect if the list level is different. Treat any sequential list level difference as a sub-list
+	 * @return array 
+	 */
+	private function parseMdList($mdList)
 	{
-		$this->mdTableString = $mdTableItems;
-	}
-	// private function setChordProChords($chordProChords)
-	// {
-	// 	$this->chordProChords = $chordProChords;
-	// }
+		$listNodeRegX = '/(^\s*|\s*)([-+*]\s*)(.+)/';
 
-	private function parseMdList()
+		preg_match_all($listNodeRegX, $mdList, $matches);
+
+		$nodeDepthArray = $this->removeLineBreaks($matches[1]);
+		$itemListArray = $matches[3];
+
+		$this->setColumnWidth( $this->testColumnWidths($itemListArray) );
+
+		$baseNodeDepth = $nodeDepthArray[0];
+
+		$columnHeaders = [];
+		$columnItems = [];
+		$columnValues = [];
+
+		$loopLength = count($itemListArray) - 1;
+
+		for ($i = 0; $i <= $loopLength; $i++) {
+
+			if ($nodeDepthArray[$i] === $baseNodeDepth) {
+				// item is column heading
+				array_push( $columnHeaders, $this->padCellValue($itemListArray[$i]) );
+				$columnChange = count($columnHeaders) > 1 ? true : false;
+			} else {
+				// item is a column value
+				array_push( $columnItems, $this->padCellValue($itemListArray[$i]) );
+				$columnChange = false;
+			}
+
+			$lastIteration = $i === $loopLength ? true : false;
+
+			if ( $columnChange || $lastIteration ) {
+
+				if (count($columnItems) === 0) {
+					$columnItems = [$this->padCellValue('')];
+				}
+
+				array_push($columnValues, $columnItems);
+				$columnItems = [];
+			}
+
+		}
+
+		$columnValues = $this->stretchArrays( $columnValues, $this->getTableWidth($columnHeaders), $this->getTableDepth($columnValues) );
+
+		return [$columnHeaders, $columnValues];
+	}
+
+	private function buildMdTableString()
 	{
-		return '| Heading 1 |' . PHP_EOL . 
-				  '|-----------|' . PHP_EOL .
-				  '|    Item 1 |';
-	}
-	// private function harvestChords()
-	// {
-	// 	preg_match_all($this->chordsRegX, $this->chordPro, $matches);
-	// 	return $this->removeDuplicateChords($matches[0]);
-	// }
+		// ### ADD DELIMITERS AND PADDING
+		
+		$tableString = '';
+		$tableArray = $this->mdTableArray;
 
-	// private function removeDuplicateChords($chords)
-	// {
-	// 	return array_keys(array_flip($chords));
-	// }
+		foreach ($tableArray[0] as $columnHeader) {
+			$tableString .= '|' . $columnHeader;
+		}
+
+		$tableString .= '|' . PHP_EOL;
+		
+		$tableWidth = count($tableArray[0]) - 1;
+
+		$rowPadding = str_repeat($this->rowDelim, $this->columnWidth + ($this->paddingValue * 2));
+
+		for ($i = 0; $i <= $tableWidth; $i++) {
+			$tableString .= '|' . $rowPadding;
+		}
+
+		$tableString .= '|' . PHP_EOL;
+
+		for ($i = 0; $i <= $tableWidth; $i++) {
+
+			$row = array_column($tableArray[1], $i);
+			
+			foreach ($row as $rowValue) {
+				$tableString .= '|' . $rowValue;
+			}
+
+			if (count($row) > 0) {
+				$tableString .= '|' . PHP_EOL;
+			}
+		}
+
+		return $tableString;
+	}
 	
 	### Public Methods ###
 	
@@ -57,63 +127,118 @@ class MdList2Table
 		return $this->mdTableString;
 	}
 
-	// public function getChordProChords()
-	// {
-	// 	return $this->chordProChords;
-	// }
+	### Private Methods ###
 
-	// public function printChordProChords()
-	// {
-	// 	$chordProChords = $this->chordProChords;
-	// 	foreach ($chordProChords as $chordProChord) {
-	// 		print $chordProChord . PHP_EOL;
-	// 	}
-	// }
+	private function removeLineBreaks($matchedItems)
+	{
+		return str_replace(PHP_EOL, '', $matchedItems);
+	}
 
-	// public function getChordProDefs($instrument)
-	// {
-	// 	return $this->buildChordProDefs($instrument);
-	// }
+	private function padCellValue($cell, $alignment = 'centre')
+	{
+		$pad = $this->paddingChar;
 
-	// public function getChordProDefsString($instrument)
-	// {
-	// 	$chordProDefs = $this->buildChordProDefs($instrument);
-	// 	$chordProDefsString = '';
-
-	// 	foreach ($chordProDefs as $chordProDef) {
-	// 		$chordProDefsString .= $chordProDef . PHP_EOL;
-	// 	}
-
-	// 	return trim($chordProDefsString);
-	// }
-
-	// public function printChordProDefs($instrument)
-	// {
-	// 	$chordProDefs = $this->buildChordProDefs($instrument);
-	// 	foreach ($chordProDefs as $chordProDef) {
-	// 		print $chordProDef . PHP_EOL;
-	// 	}
-	// }
-
-	// ### Private Methods ###
-
-	// private function buildChordProDefs($instrument)
-	// {
-	// 	$defPrefix = '{define: ';
-	// 	$defSuffix = $this->defSuffix[strtolower($instrument)];
-	// 	$chordProChords = $this->stripBrackets($this->chordProChords);
-	// 	$chordProDefs = [];
-
-	// 	foreach ($chordProChords as $chordProChord) {
-	// 		array_push($chordProDefs, $defPrefix . $chordProChord . $defSuffix);
-	// 	}
+		switch ($alignment) {
+			case 'centre':
+				$padding = $this->calculateCentrePadding($this->columnWidth, strlen($cell));
+				break;
+			case 'left':
+				$padding = $this->calculateLeftPadding($this->columnWidth, strlen($cell));
+				break;			
+			case 'right':
+				$padding = $this->calculateRightPadding($this->columnWidth, strlen($cell));
+				break;
+		}
 		
-	// 	return $chordProDefs;
-	// }
+		$paddingLeft = str_repeat($pad, $padding[0]);
+		$paddingRight = str_repeat($pad, $padding[1]);
+		
+		return $paddingLeft . $cell . $paddingRight;
+	}
 
-	// private function stripBrackets($chordProChords)
-	// {
-	// 	return preg_filter($this->bracketsRegX, '', $chordProChords);
-	// }
+	private function calculateCentrePadding($columnWidth, $cellLength)
+	{
+		$paddingRemainder = $columnWidth - $cellLength;
+		$paddingLeft = intVal($paddingRemainder / 2);
+		$paddingRight = $paddingRemainder - $paddingLeft;
+
+		$paddingLeft += $this->paddingValue;
+		$paddingRight += $this->paddingValue;
+
+		return [$paddingLeft, $paddingRight];
+	}
+
+	private function calculateLeftPadding($columnWidth, $cellLength)
+	{
+		$paddingLeft = $this->paddingValue;
+		$paddingRight = ($columnWidth - $cellLength) + $this->paddingValue;
+
+		return [$paddingLeft, $paddingRight];
+	}
+
+	private function calculateRightPadding($columnWidth, $cellLength)
+	{
+		$paddingLeft = ($columnWidth - $cellLength) + $this->paddingValue;
+		$paddingRight = $this->paddingValue;
+
+		return [$paddingLeft, $paddingRight];
+	}
+
+	private function stretchArrays($columnValues, $tableWidth, $tableDepth)
+	{
+		$returnArray = [];
+		$valuePadding = str_repeat($this->paddingChar, $this->columnWidth + ($this->paddingValue * 2));
+
+		// stretch horizontally
+		$padStart = count($columnValues);
+		for ($i = $padStart; $i < $tableWidth; $i++) { 
+			array_push($columnValues, [$valuePadding]);
+		}
+
+		// stretch vertically
+		foreach ($columnValues as $columnValueItems) {
+			$padStart = count($columnValueItems);
+			for ($i = $padStart; $i < $tableDepth; $i++) { 
+				array_push($columnValueItems, $valuePadding);
+			}
+			array_push($returnArray, $columnValueItems);
+		}
+		return $returnArray;
+	}
+
+	private function getTableWidth($columnHeaders)
+	{
+		return count($columnHeaders);
+	}
+
+	private function getTableDepth($columnValues)
+	{
+		$columnLengths = [];
+		foreach ($columnValues as $columnValueItems) {
+			array_push($columnLengths, count($columnValueItems));
+		}
+		return max($columnLengths);	
+	}
+
+	private function testColumnWidths($itemListArray)
+	{
+		$itemLengths = [];
+
+		foreach ($itemListArray as $item) {
+			array_push($itemLengths, strlen($item));
+		}
+
+		return max($itemLengths);
+	}
+
+	private function setColumnWidth($columnWidth)
+	{
+		$this->columnWidth = $columnWidth;
+	}
+
+	private function setMdTableString($mdTableString)
+	{
+		$this->mdTableString = $mdTableString;
+	}
 
 }
