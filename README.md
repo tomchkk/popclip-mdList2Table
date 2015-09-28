@@ -20,8 +20,8 @@ will be transformed into the following, harder-to-write-by-hand, format:
 ```
 -->    | Heading 1 | Heading 2 | Heading 3 |
        |-----------|-----------|-----------|
-       |    Item 1 |  Item 1   |           |
-       |    Item 2 |  Item 2   |           |
+       |  Item 1   |  Item 1   |           |
+       |  Item 2   |  Item 2   |           |
 ```
 
 ### Testing
