@@ -3,28 +3,26 @@
 <plist version="1.0">
 <dict>
 	<key>Extension Identifier</key>
-	<string>com.lickyourlips.popclip.extension.definechords</string>
+	<string>com.lickyourlips.popclip.extension.mdlist2table</string>
 	<key>Extension Name</key>
-	<string>Define ChordPro</string>
+	<string>MdList2Table</string>
 	<key>Extension Description</key>
-	<string>Copy selected ChordPro text, strip it of lyrics and chord duplications; put chord definition templates in the clipboard</string>
-	<key>Required Apps</key>
-	<array>
-		<string>com.sublimetext.2</string>
-		<string>com.apple.TextEdit</string>
-		<string>com.gfApps.ChordPro-Buddy</string>
-	</array>
+	<string>Convert and paste in place selected markdown-formatted list into a markdown-formatted table.</string>
 	<key>Actions</key>
 	<array>
 		<dict>
-			<key>After</key>
-			<string>copy-result</string>
 			<key>Title</key>
-			<string>Define ChordPro Chords</string>
+			<string>MdList2Table</string>
+			<key>Image File</key>
+			<string>mdlist2table.png</string>
 			<key>Shell Script File</key>
 			<string>PopClip.php</string>
 			<key>Script Interpreter</key>
 			<string>/usr/bin/php</string>
+			<key>After</key>
+			<string>paste-result</string>
+			<key>Regular Expression</key>
+			<string>(^\s*|\s*)[-+*]\s*.+</string>
 			<key>Requirements</key>
 			<array>
 				<string>copy</string>
@@ -32,8 +30,6 @@
 			</array>
 			<key>Restore Pasteboard</key>
 			<true/>
-			<key>Image File</key>
-			<string>note-lines.png</string>
 		</dict>
 	</array>
 	<key>Version</key>

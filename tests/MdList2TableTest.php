@@ -159,6 +159,38 @@ class MdList2TableTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
+	 * @dataProvider emptyListProvider
+	 */
+	public function testEmptyList($mdList, $expected)
+	{
+		$this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+		$mdTable = new MdList2Table($mdList);
+		$this->assertEquals($expected, $mdTable->getMdTableString());
+
+	}
+
+	public function emptyListProvider()
+	{
+		$mdList = '-' . PHP_EOL .
+				  '  -' . PHP_EOL .
+				  '  - ' . PHP_EOL .
+				  '- ' . PHP_EOL .
+				  '  - ' . PHP_EOL .
+				  '  -' . PHP_EOL;
+		$expected = '|  |  |' . PHP_EOL . 
+				    '|--|--|' . PHP_EOL .
+				    '|  |  |' . PHP_EOL . 
+				    '|  |  |' . PHP_EOL;
+		$dataShortColumns = array($mdList, $expected);
+
+		return array(
+			$dataShortColumns,
+		);
+	}
+
+	/**
 	 * @dataProvider longColumnWidthProvider
 	 */
 	public function testLongColumnWidth($mdList, $expected)
