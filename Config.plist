@@ -22,7 +22,7 @@
 			<key>After</key>
 			<string>paste-result</string>
 			<key>Regular Expression</key>
-			<string>(^\s*|\s*)[-+*]\s*.+</string>
+			<string>(?s)\s*[-+*]\s*.+</string>
 			<key>Requirements</key>
 			<array>
 				<string>copy</string>

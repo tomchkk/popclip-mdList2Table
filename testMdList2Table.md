@@ -1,6 +1,6 @@
 Input:
 
- - Heading 1
+- Heading 1
  - Item 1
  - Item 2
 - Heading 2

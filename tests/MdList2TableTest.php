@@ -25,14 +25,12 @@ class MdList2TableTest extends \PHPUnit_Framework_TestCase
 				  '  - Item 1' . PHP_EOL .
 				  '- Heading 3' . PHP_EOL .
 				  '  - Item 1' . PHP_EOL .
-				  '  - Item 2' . PHP_EOL .
-				  '- Heading 4' . PHP_EOL .
-				  '  - Item 1';
-		$expected = '| Heading 1 | Heading 2 | Heading 3 | Heading 4 |' . PHP_EOL .
-					'|-----------|-----------|-----------|-----------|' . PHP_EOL .
-					'|  Item 1   |  Item 1   |  Item 1   |  Item 1   |' . PHP_EOL .
-					'|  Item 2   |           |  Item 2   |           |' . PHP_EOL .
-					'|  Item 3   |           |           |           |' . PHP_EOL;
+				  '  - Item 2';
+		$expected = '| Heading 1 | Heading 2 | Heading 3 |' . PHP_EOL .
+					'|-----------|-----------|-----------|' . PHP_EOL .
+					'|  Item 1   |  Item 1   |  Item 1   |' . PHP_EOL .
+					'|  Item 2   |           |  Item 2   |' . PHP_EOL .
+					'|  Item 3   |           |           |' . PHP_EOL;
 		$dataStandard = array($mdList, $expected);
 
 		$mdList = '- Heading 1' . PHP_EOL .
@@ -45,6 +43,105 @@ class MdList2TableTest extends \PHPUnit_Framework_TestCase
 		return array(
 			$dataStandard,
 			$dataSmall
+		);
+	}
+
+	/**
+	 * @dataProvider headingsWithoutItemsProvider
+	 */
+	public function testHeadingsWithoutItems($mdList, $expected)
+	{
+		$mdTable = new MdList2Table($mdList);
+		$this->assertEquals($expected, $mdTable->getMdTableString());
+	}
+
+	public function headingsWithoutItemsProvider()
+	{
+		$mdList = '- Heading 1' . PHP_EOL .
+				  '  - Item 1' . PHP_EOL .
+				  '  - Item 2' . PHP_EOL .
+				  '  - Item 3' . PHP_EOL .
+				  '  - Item 4' . PHP_EOL .
+				  '  - Item 5' . PHP_EOL .
+				  '  - Item 6' . PHP_EOL .
+				  '  - Item 7' . PHP_EOL .
+				  '- Heading 2' . PHP_EOL .
+				  '  - Item 1' . PHP_EOL .
+				  '- Heading 3' . PHP_EOL .
+				  '- Heading 4' . PHP_EOL .
+				  '  - Item 1' . PHP_EOL .
+				  '  - Item 2';
+		$expected = '| Heading 1 | Heading 2 | Heading 3 | Heading 4 |' . PHP_EOL .
+					'|-----------|-----------|-----------|-----------|' . PHP_EOL .
+					'|  Item 1   |  Item 1   |           |  Item 1   |' . PHP_EOL .
+					'|  Item 2   |           |           |  Item 2   |' . PHP_EOL .
+					'|  Item 3   |           |           |           |' . PHP_EOL .
+					'|  Item 4   |           |           |           |' . PHP_EOL .
+					'|  Item 5   |           |           |           |' . PHP_EOL .
+					'|  Item 6   |           |           |           |' . PHP_EOL .
+					'|  Item 7   |           |           |           |' . PHP_EOL;
+		$dataNoItemsMixed = array($mdList, $expected);
+
+		$mdList = '- Heading 1' . PHP_EOL .
+				  ' - Item 1' . PHP_EOL .
+				  ' - Item 2' . PHP_EOL .
+				  ' - Item 3' . PHP_EOL .
+				  ' - Item 4' . PHP_EOL .
+				  ' - Item 5' . PHP_EOL .
+				  ' - Item 6' . PHP_EOL .
+				  '- Heading 2' . PHP_EOL .
+				  '- Heading 3' . PHP_EOL .
+				  '- Heading 4';
+		$expected = '| Heading 1 | Heading 2 | Heading 3 | Heading 4 |' . PHP_EOL . 
+				    '|-----------|-----------|-----------|-----------|' . PHP_EOL .
+				    '|  Item 1   |           |           |           |' . PHP_EOL . 
+				    '|  Item 2   |           |           |           |' . PHP_EOL .
+				    '|  Item 3   |           |           |           |' . PHP_EOL .
+				    '|  Item 4   |           |           |           |' . PHP_EOL .
+				    '|  Item 5   |           |           |           |' . PHP_EOL .
+				    '|  Item 6   |           |           |           |' . PHP_EOL;
+		$dataNoItems = array($mdList, $expected);
+
+		return array(
+			$dataNoItemsMixed,
+			$dataNoItems
+		);
+	}
+
+	/**
+	 * @dataProvider headingsWithManyItemsProvider
+	 */
+	public function testHeadingsWithManyItems($mdList, $expected)
+	{
+		$mdTable = new MdList2Table($mdList);
+		$this->assertEquals($expected, $mdTable->getMdTableString());
+	}
+
+	public function headingsWithManyItemsProvider()
+	{
+		$mdList = '- Heading 1' . PHP_EOL .
+				  '  - Item 1' . PHP_EOL .
+				  '  - Item 2' . PHP_EOL .
+				  '  - Item 3' . PHP_EOL .
+				  '  - Item 4' . PHP_EOL .
+				  '  - Item 5' . PHP_EOL .
+				  '  - Item 6' . PHP_EOL .
+				  '  - Item 7';
+
+		$expected = '| Heading 1 |' . PHP_EOL .
+					'|-----------|' . PHP_EOL .
+					'|  Item 1   |' . PHP_EOL .
+					'|  Item 2   |' . PHP_EOL .
+					'|  Item 3   |' . PHP_EOL .
+					'|  Item 4   |' . PHP_EOL .
+					'|  Item 5   |' . PHP_EOL .
+					'|  Item 6   |' . PHP_EOL .
+					'|  Item 7   |' . PHP_EOL;
+
+		$dataMany = array($mdList, $expected);
+
+		return array(
+			$dataMany,
 		);
 	}
 
@@ -159,38 +256,6 @@ class MdList2TableTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @dataProvider emptyListProvider
-	 */
-	public function testEmptyList($mdList, $expected)
-	{
-		$this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
-		$mdTable = new MdList2Table($mdList);
-		$this->assertEquals($expected, $mdTable->getMdTableString());
-
-	}
-
-	public function emptyListProvider()
-	{
-		$mdList = '-' . PHP_EOL .
-				  '  -' . PHP_EOL .
-				  '  - ' . PHP_EOL .
-				  '- ' . PHP_EOL .
-				  '  - ' . PHP_EOL .
-				  '  -' . PHP_EOL;
-		$expected = '|  |  |' . PHP_EOL . 
-				    '|--|--|' . PHP_EOL .
-				    '|  |  |' . PHP_EOL . 
-				    '|  |  |' . PHP_EOL;
-		$dataShortColumns = array($mdList, $expected);
-
-		return array(
-			$dataShortColumns,
-		);
-	}
-
-	/**
 	 * @dataProvider longColumnWidthProvider
 	 */
 	public function testLongColumnWidth($mdList, $expected)
@@ -213,6 +278,34 @@ class MdList2TableTest extends \PHPUnit_Framework_TestCase
 
 		return array(
 			$dataLongColumns,
+		);
+	}
+
+	/**
+	 * @dataProvider emptyListProvider
+	 */
+	public function testEmptyList($mdList, $expected)
+	{
+		$this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+		$mdTable = new MdList2Table($mdList);
+		$this->assertEquals($expected, $mdTable->getMdTableString());
+
+	}
+
+	public function emptyListProvider()
+	{
+		$mdList = '- ' . PHP_EOL .
+				  '  + ' . PHP_EOL .
+		$expected = '|  |  |' . PHP_EOL . 
+				    '|--|--|' . PHP_EOL .
+				    '|  |  |' . PHP_EOL . 
+				    '|  |  |' . PHP_EOL;
+		$dataShortColumns = array($mdList, $expected);
+
+		return array(
+			$dataShortColumns,
 		);
 	}
 

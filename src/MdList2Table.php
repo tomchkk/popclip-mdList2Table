@@ -87,7 +87,7 @@ class MdList2Table
 	 */
 	private function parseMdList($mdList)
 	{
-		$listNodeRegX = '/(^\s*|\s*)([-+*]\s*)(.+)/';
+		$listNodeRegX = '/(\s*)([\-\+\*]\s*)([^\n]*)/';
 
 		preg_match_all($listNodeRegX, $mdList, $matches);
 
@@ -341,36 +341,49 @@ class MdList2Table
 		$tableString = '';
 		$tableArray = $this->mdTableArray;
 
-		foreach ($tableArray[0] as $columnHeader) {
-			$tableString .= '|' . $columnHeader;
-		}
-
-		$tableString .= '|' . PHP_EOL;
-		
-		$tableWidth = count($tableArray[0]) - 1;
-
-		$rowPadding = str_repeat($this->rowDelim, $this->columnWidth + ($this->paddingValue * 2));
-
-		for ($i = 0; $i <= $tableWidth; $i++) {
-			$tableString .= '|' . $rowPadding;
-		}
-
-		$tableString .= '|' . PHP_EOL;
-
-		for ($i = 0; $i <= $tableWidth; $i++) {
-
-			$row = array_column($tableArray[1], $i);
-			
-			foreach ($row as $rowValue) {
-				$tableString .= '|' . $rowValue;
-			}
-
-			if (count($row) > 0) {
-				$tableString .= '|' . PHP_EOL;
-			}
-		}
+		$tableString .= $this->buildTableHeaders($tableArray[0]);		
+		$tableString .= $this->buildHeaderSeparator(count($tableArray[0]));
+		$tableString .= $this->buildTableRows($tableArray[1]);
 
 		return $tableString;
+	}
+
+	private function buildTableHeaders($headersArray)
+	{	
+		$delim = $this->colDelim;
+		$headerString = '';
+		foreach ($headersArray as $columnHeader) {
+			$headerString .= $delim . $columnHeader;
+		}
+		return $headerString . $delim . PHP_EOL;
+	}
+
+	private function buildHeaderSeparator($tableWidth)
+	{
+		$delim = $this->colDelim;
+		$separatorString = '';
+		$separator = str_repeat($this->rowDelim, $this->columnWidth + ($this->paddingValue * 2));
+		for ($i = 0; $i < $tableWidth; $i++) {
+			$separatorString .= $delim . $separator;
+		}
+		return $separatorString . $delim . PHP_EOL;
+	}
+
+	private function buildTableRows($columnArrays)
+	{
+		$delim = $this->colDelim;
+		$columnHeight = count($columnArrays[0]);
+		$rows = '';
+		for ($i = 0; $i < $columnHeight; $i++) {
+			// transpose items at the current index of each column array into a new array
+			$row = array_column($columnArrays, $i);
+			$rowString = '';
+			foreach ($row as $rowValue) {
+				$rowString .= $delim . $rowValue;
+			}
+			$rows .= $rowString . $delim . PHP_EOL;
+		}
+		return $rows;
 	}
 
 }
