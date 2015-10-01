@@ -334,7 +334,7 @@ class MdList2Table
 
 	/**
 	 * Build the main string to be output from the parsed list given in the constructor
-	 * @return string String containing the converted md-formatted list as a table
+	 * @return string containing the converted md-formatted list as a table
 	 */
 	private function buildMdTableString()
 	{		
@@ -348,6 +348,11 @@ class MdList2Table
 		return $tableString;
 	}
 
+	/**
+	 * Build the header row
+	 * @param  array $headersArray One-dimensional array containing header items
+	 * @return string               Pipe-delimited row of header items
+	 */
 	private function buildTableHeaders($headersArray)
 	{	
 		$delim = $this->colDelim;
@@ -358,6 +363,11 @@ class MdList2Table
 		return $headerString . $delim . PHP_EOL;
 	}
 
+	/**
+	 * Build the row that separates the header from the table contents
+	 * @param  integer $tableWidth The width of the table, in terms of character spaces
+	 * @return string             Pipe-delimited separator row
+	 */
 	private function buildHeaderSeparator($tableWidth)
 	{
 		$delim = $this->colDelim;
@@ -369,6 +379,11 @@ class MdList2Table
 		return $separatorString . $delim . PHP_EOL;
 	}
 
+	/**
+	 * Build the rows that contain the table contents
+	 * @param  array $columnArrays Multi-dimensional array containing columns of content, to be transposed to rows
+	 * @return string               Pipe-delimited rows of table content
+	 */
 	private function buildTableRows($columnArrays)
 	{
 		$delim = $this->colDelim;
