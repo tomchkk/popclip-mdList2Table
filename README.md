@@ -1,9 +1,11 @@
-mdList2Table
+MdList2Table
 ============
 
-A PopClip Extension to convert a markdown formatted list (of max two dimensions) into a markdown formatted table.
+A PopClip Extension to convert a markdown-formatted list into a markdown-formatted table.
 
 ### Usage
+
+To keep the extension flexible, it is configured – by regular expression – to appear when a markdown-formatted list is selected, independent of application or OS.
 
 A list, set out in the following format:
 
@@ -15,13 +17,32 @@ A list, set out in the following format:
 	  - Item 2
 	- Heading 3
 
-will be transformed into the following, harder-to-write-by-hand, format:
+will be transformed into the following, slower-to-write-by-hand format:
 
 ```
 -->    | Heading 1 | Heading 2 | Heading 3 |
        |-----------|-----------|-----------|
        |  Item 1   |  Item 1   |           |
        |  Item 2   |  Item 2   |           |
+```
+
+Lists with items more than 2 levels deep will be flattened to be only 2 levels deep. For example:
+
+	- Heading 1
+	  - Item 1
+	    - Sub-item 1
+	- Heading 2
+	  - Item 1
+	  - Item 2
+	- Heading 3
+
+will be transformed into the following table:
+
+```
+-->    | Heading 1 | Heading 2 | Heading 3 |
+       |-----------|-----------|-----------|
+       |  Item 1   |  Item 1   |           |
+       | Subitem 1 |  Item 2   |           |
 ```
 
 ### Testing
