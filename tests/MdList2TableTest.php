@@ -286,9 +286,6 @@ class MdList2TableTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testEmptyList($mdList, $expected)
 	{
-		$this->markTestIncomplete(
-          'The regex used in the list parser, parseMdList(), is currently unable to correctly distinguish empty table nodes.'
-        );
 		$mdTable = new MdList2Table($mdList);
 		$this->assertEquals($expected, $mdTable->getMdTableString());
 
@@ -298,10 +295,47 @@ class MdList2TableTest extends \PHPUnit_Framework_TestCase
 	{
 		$mdList = '- ' . PHP_EOL .
 				  '  + ' . PHP_EOL .
-		$expected = '|  |  |' . PHP_EOL . 
+				  '  +' . PHP_EOL .
+				  '  + ' . PHP_EOL .
+				  '- ' . PHP_EOL .
+				  '  +' . PHP_EOL;
+		$expected = '|  |  |' . PHP_EOL .
 				    '|--|--|' . PHP_EOL .
-				    '|  |  |' . PHP_EOL . 
+				    '|  |  |' . PHP_EOL .
+				    '|  |  |' . PHP_EOL .
 				    '|  |  |' . PHP_EOL;
+		$dataShortColumns = array($mdList, $expected);
+
+		return array(
+			$dataShortColumns,
+		);
+	}
+
+	/**
+	 * @dataProvider listWithEmptyItemsProvider
+	 */
+	public function testListWithEmptyItems($mdList, $expected)
+	{
+		$mdTable = new MdList2Table($mdList);
+		$this->assertEquals($expected, $mdTable->getMdTableString());
+
+	}
+
+	public function listWithEmptyItemsProvider()
+	{
+		$mdList = '- Heading 1' . PHP_EOL .
+				  '  + Item 1' . PHP_EOL .
+				  '  +' . PHP_EOL .
+				  '  + Item 2' . PHP_EOL .
+				  '- Heading 2' . PHP_EOL .
+				  '  + ' . PHP_EOL .
+				  '  + Item 1' . PHP_EOL .
+				  '  + Item 2' . PHP_EOL;
+		$expected = '| Heading 1 | Heading 2 |' . PHP_EOL .
+				    '|-----------|-----------|' . PHP_EOL .
+				    '|  Item 1   |           |' . PHP_EOL .
+				    '|           |  Item 1   |' . PHP_EOL .
+				    '|  Item 2   |  Item 2   |' . PHP_EOL;
 		$dataShortColumns = array($mdList, $expected);
 
 		return array(

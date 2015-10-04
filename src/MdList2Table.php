@@ -87,7 +87,7 @@ class MdList2Table
 	 */
 	private function parseMdList($mdList)
 	{
-		$listNodeRegX = '/(\s*)([\-\+\*]\s*)([^\n]*)/';
+		$listNodeRegX = '/( *)([\-\+\*] *)(.*)/';
 
 		preg_match_all($listNodeRegX, $mdList, $matches);
 
