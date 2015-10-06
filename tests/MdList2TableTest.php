@@ -270,10 +270,10 @@ class MdList2TableTest extends \PHPUnit_Framework_TestCase
 				  '  - This is a really long value for the table' . PHP_EOL .
 				  '  - x' . PHP_EOL .
 				  '- Heading 2' . PHP_EOL;
-		$expected = '|                 Heading 1                 |                 Heading 2                 |' . PHP_EOL . 
-				    '|-------------------------------------------|-------------------------------------------|' . PHP_EOL .
-				    '| This is a really long value for the table |                                           |' . PHP_EOL .
-				    '|                     x                     |                                           |' . PHP_EOL;
+		$expected = '|                 Heading 1                 | Heading 2 |' . PHP_EOL . 
+				    '|-------------------------------------------|-----------|' . PHP_EOL .
+				    '| This is a really long value for the table |           |' . PHP_EOL .
+				    '|                     x                     |           |' . PHP_EOL;
 		$dataLongColumns = array($mdList, $expected);
 
 		return array(
@@ -340,6 +340,74 @@ class MdList2TableTest extends \PHPUnit_Framework_TestCase
 
 		return array(
 			$dataShortColumns,
+		);
+	}
+
+	/**
+	 * @dataProvider columnPaddingFittedProvider
+	 */
+	public function testColumnPaddingFitted($mdList, $expected)
+	{
+		$mdTable = new MdList2Table($mdList);
+		$this->assertEquals($expected, $mdTable->getMdTableString());
+	}
+
+	public function columnPaddingFittedProvider()
+	{
+		$mdList = '- Heading 1' . PHP_EOL .
+				  '  - Item 1' . PHP_EOL .
+				  '  - Item 2' . PHP_EOL .
+				  '  - Item 3' . PHP_EOL .
+				  '- xx' . PHP_EOL .
+				  '- x' . PHP_EOL .
+				  '- Heading 3' . PHP_EOL .
+				  '  - Longer Item Node' . PHP_EOL .
+				  '  - Item 2';
+
+		$expected = '| Heading 1 | xx | x |    Heading 3     |' . PHP_EOL .
+					'|-----------|----|---|------------------|' . PHP_EOL .
+					'|  Item 1   |    |   | Longer Item Node |' . PHP_EOL .
+					'|  Item 2   |    |   |      Item 2      |' . PHP_EOL .
+					'|  Item 3   |    |   |                  |' . PHP_EOL;
+		
+		$dataStandard = array($mdList, $expected);
+
+		return array(
+			$dataStandard,
+		);
+	}
+
+	/**
+	 * @dataProvider columnPaddingAutoProvider
+	 */
+	public function testColumnPaddingAuto($mdList, $expected)
+	{
+		$mdTable = new MdList2Table($mdList, true);
+		$this->assertEquals($expected, $mdTable->getMdTableString());
+	}
+
+	public function columnPaddingAutoProvider()
+	{
+		$mdList = '- Heading 1' . PHP_EOL .
+				  '  - Item 1' . PHP_EOL .
+				  '  - Item 2' . PHP_EOL .
+				  '  - Item 3' . PHP_EOL .
+				  '- xx' . PHP_EOL .
+				  '- x' . PHP_EOL .
+				  '- Heading 3' . PHP_EOL .
+				  '  - Longer Item Node' . PHP_EOL .
+				  '  - Item 2';
+
+		$expected = '|    Heading 1     |        xx        |        x         |    Heading 3     |' . PHP_EOL .
+					'|------------------|------------------|------------------|------------------|' . PHP_EOL .
+					'|      Item 1      |                  |                  | Longer Item Node |' . PHP_EOL .
+					'|      Item 2      |                  |                  |      Item 2      |' . PHP_EOL .
+					'|      Item 3      |                  |                  |                  |' . PHP_EOL;
+		
+		$dataStandard = array($mdList, $expected);
+
+		return array(
+			$dataStandard,
 		);
 	}
 
